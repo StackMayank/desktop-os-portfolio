@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Desktop } from "@/components/Desktop";
 
 export const Route = createFileRoute("/")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Mayank — Portfolio OS" },
