@@ -67,7 +67,7 @@ export function Desktop() {
           <Widget id="clock" initial={{ x: 24, y: 56 }} isMobile={false}><ClockWidget /></Widget>
           <Widget id="weather" initial={{ x: 24, y: 220 }} isMobile={false}><WeatherWidget /></Widget>
           <Widget id="todo" initial={{ x: 24, y: 400 }} isMobile={false}><TodoWidget /></Widget>
-          <Widget id="calendar" initial={{ x: window.innerWidth - 280, y: 56 }} isMobile={false}><CalendarWidget /></Widget>
+          <Widget id="calendar" initial={{ x: (typeof window !== "undefined" ? window.innerWidth : 1200) - 280, y: 56 }} isMobile={false}><CalendarWidget /></Widget>
         </>
       )}
 
