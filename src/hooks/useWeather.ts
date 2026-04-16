@@ -19,7 +19,7 @@ const codeToText = (c: number): string => {
   return "Unknown";
 };
 
-export function useWeather(lat = 28.6139, lon = 77.209, city = "New Delhi") {
+export function useWeather(lat = 17.385, lon = 78.4867, city = "Hyderabad") {
   const [data, setData] = useState<Weather | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
