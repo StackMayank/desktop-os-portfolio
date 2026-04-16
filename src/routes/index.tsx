@@ -1,26 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Desktop } from "@/components/Desktop";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Mayank — Portfolio OS" },
+      { name: "description", content: "An interactive macOS-style portfolio by Mayank. Explore apps, widgets, and projects in a real OS-like experience." },
+      { property: "og:title", content: "Mayank — Portfolio OS" },
+      { property: "og:description", content: "Interactive macOS-style portfolio. Draggable windows, dock, widgets — built with React, Framer Motion and GSAP." },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
-
 function Index() {
-  return <PlaceholderIndex />;
+  return <Desktop />;
 }
