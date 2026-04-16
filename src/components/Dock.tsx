@@ -5,15 +5,23 @@ import {
 } from "lucide-react";
 import { useOS, type AppId } from "@/store/osStore";
 
-const APPS: { id: AppId; label: string; Icon: React.ComponentType<{ className?: string }>; tint: string }[] = [
-  { id: "about", label: "About", Icon: User, tint: "from-sky-400 to-blue-600" },
-  { id: "projects", label: "Projects", Icon: FolderKanban, tint: "from-blue-400 to-indigo-600" },
-  { id: "skills", label: "Skills", Icon: Sparkles, tint: "from-violet-400 to-fuchsia-600" },
-  { id: "experience", label: "Experience", Icon: Briefcase, tint: "from-amber-400 to-orange-600" },
-  { id: "contact", label: "Contact", Icon: Mail, tint: "from-emerald-400 to-teal-600" },
-  { id: "music", label: "Music", Icon: MusicIcon, tint: "from-pink-400 to-rose-600" },
-  { id: "game", label: "Game", Icon: Gamepad2, tint: "from-lime-400 to-green-600" },
-  { id: "terminal", label: "Terminal", Icon: TerminalSquare, tint: "from-zinc-400 to-zinc-700" },
+type AppDef = {
+  id: AppId;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+  gradient: string; // CSS gradient for icon face
+  glow: string;     // rgba glow color
+};
+
+const APPS: AppDef[] = [
+  { id: "about",      label: "About",      Icon: User,           gradient: "linear-gradient(135deg,#7DD3FC 0%,#3B82F6 55%,#1D4ED8 100%)", glow: "59,130,246" },
+  { id: "projects",   label: "Projects",   Icon: FolderKanban,   gradient: "linear-gradient(135deg,#A5B4FC 0%,#6366F1 55%,#3730A3 100%)", glow: "99,102,241" },
+  { id: "skills",     label: "Skills",     Icon: Sparkles,       gradient: "linear-gradient(135deg,#F0ABFC 0%,#C026D3 55%,#7E22CE 100%)", glow: "192,38,211" },
+  { id: "experience", label: "Experience", Icon: Briefcase,      gradient: "linear-gradient(135deg,#FCD34D 0%,#F97316 55%,#B45309 100%)", glow: "249,115,22" },
+  { id: "contact",    label: "Contact",    Icon: Mail,           gradient: "linear-gradient(135deg,#6EE7B7 0%,#10B981 55%,#047857 100%)", glow: "16,185,129" },
+  { id: "music",      label: "Music",      Icon: MusicIcon,      gradient: "linear-gradient(135deg,#FDA4AF 0%,#F43F5E 55%,#9F1239 100%)", glow: "244,63,94" },
+  { id: "game",       label: "Game",       Icon: Gamepad2,       gradient: "linear-gradient(135deg,#BEF264 0%,#22C55E 55%,#15803D 100%)", glow: "34,197,94" },
+  { id: "terminal",   label: "Terminal",   Icon: TerminalSquare, gradient: "linear-gradient(135deg,#3F3F46 0%,#18181B 60%,#000000 100%)", glow: "82,82,91" },
 ];
 
 export function Dock({ isMobile }: { isMobile: boolean }) {
