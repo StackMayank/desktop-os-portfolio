@@ -46,12 +46,17 @@ export function Desktop() {
 
       {/* Hero greeting on desktop */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <h1
-          className="text-3xl md:text-5xl text-white/85 italic font-light text-glow"
-          style={{ fontFamily: "'Snell Roundhand', 'Brush Script MT', cursive" }}
-        >
-          Hello, I'm Mayank
-        </h1>
+        <div className="glass rounded-3xl px-8 py-5 md:px-12 md:py-7">
+          <h1
+            className="text-4xl md:text-6xl font-semibold tracking-tight bg-clip-text text-transparent text-glow"
+            style={{
+              fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+              backgroundImage: "linear-gradient(135deg, oklch(0.98 0.01 250) 0%, oklch(0.85 0.12 280) 50%, oklch(0.75 0.18 250) 100%)",
+            }}
+          >
+            Hello, I'm Mayank
+          </h1>
+        </div>
       </div>
 
       {/* Widgets */}
