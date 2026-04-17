@@ -45,18 +45,19 @@ export function Desktop() {
       <MenuBar />
 
       {/* Hero greeting on desktop */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="glass rounded-3xl px-8 py-5 md:px-12 md:py-7">
-          <h1
-            className="text-4xl md:text-6xl font-semibold tracking-tight bg-clip-text text-transparent text-glow"
-            style={{
-              fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif",
-              backgroundImage: "linear-gradient(135deg, oklch(0.98 0.01 250) 0%, oklch(0.85 0.12 280) 50%, oklch(0.75 0.18 250) 100%)",
-            }}
-          >
-            Hello, I'm Mayank
-          </h1>
-        </div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-2">
+        <p
+          className="text-sm md:text-base font-light tracking-[0.35em] uppercase text-white/70"
+          style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" }}
+        >
+          Hello, I'm
+        </p>
+        <h1
+          className="glass-text text-7xl md:text-9xl font-black tracking-tight leading-none"
+          style={{ fontFamily: "'Archivo Black', 'Inter', sans-serif", letterSpacing: "-0.04em" }}
+        >
+          Mayank
+        </h1>
       </div>
 
       {/* Widgets */}
