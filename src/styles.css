@@ -71,6 +71,13 @@
 
   --shadow-window: 0 30px 80px -20px rgb(0 0 0 / 0.7), 0 10px 30px -10px rgb(0 0 0 / 0.5);
   --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.4), inset 0 1px 0 rgb(255 255 255 / 0.06);
+
+  /* Scrollbars — glass rail + thumb (Firefox uses scrollbar-color) */
+  --scrollbar-thumb: oklch(0.58 0.14 285 / 0.72);
+  --scrollbar-thumb-hover: oklch(0.68 0.16 285 / 0.88);
+  --scrollbar-thumb-active: oklch(0.48 0.12 280 / 0.95);
+  --scrollbar-track: oklch(0.12 0.025 270 / 0.42);
+  --scrollbar-track-edge: oklch(1 0 0 / 0.07);
 }
 
 .dark {
@@ -91,6 +98,82 @@
     font-family: var(--font-display);
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+   * Glass scrollbars (Chromium / WebKit). Replaces harsh OS default tracks/thumbs.
+   * Firefox: thin bar + scrollbar-color (flat but on-theme).
+   */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  *::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: linear-gradient(
+      180deg,
+      oklch(0.14 0.02 270 / 0.5),
+      oklch(0.09 0.02 275 / 0.45)
+    );
+    border-radius: 999px;
+    border: 1px solid var(--scrollbar-track-edge);
+    box-shadow:
+      inset 0 1px 1px oklch(0 0 0 / 0.35),
+      inset 0 -1px 0 oklch(1 0 0 / 0.04);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    background-image: linear-gradient(
+      165deg,
+      oklch(0.72 0.12 295 / 0.55),
+      oklch(0.42 0.14 275 / 0.75) 55%,
+      oklch(0.35 0.12 265 / 0.85)
+    );
+    box-shadow:
+      inset 0 1px 1px oklch(1 0 0 / 0.22),
+      inset 0 -1px 0 oklch(0 0 0 / 0.2),
+      0 2px 12px oklch(0.45 0.15 285 / 0.35);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-image: linear-gradient(
+      165deg,
+      oklch(0.82 0.14 295 / 0.65),
+      oklch(0.55 0.16 280 / 0.82) 50%,
+      oklch(0.45 0.14 270 / 0.9)
+    );
+    box-shadow:
+      inset 0 1px 1px oklch(1 0 0 / 0.3),
+      inset 0 -1px 0 oklch(0 0 0 / 0.15),
+      0 0 18px oklch(0.65 0.2 285 / 0.45),
+      0 2px 14px oklch(0.35 0.1 270 / 0.5);
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background-image: linear-gradient(
+      165deg,
+      oklch(0.5 0.12 285 / 0.95),
+      oklch(0.38 0.12 275 / 0.98)
+    );
+    box-shadow: inset 0 2px 6px oklch(0 0 0 / 0.35);
   }
 }
 
@@ -118,8 +201,26 @@
   .text-glow {
     text-shadow: 0 0 24px oklch(0.7 0.18 280 / 0.6);
   }
-  .scrollbar-hidden::-webkit-scrollbar { display: none; }
-  .scrollbar-hidden { scrollbar-width: none; }
+  /* Must win over global * scrollbar rules */
+  .scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hidden::-webkit-scrollbar,
+  .scrollbar-hidden::-webkit-scrollbar-corner,
+  .scrollbar-hidden::-webkit-scrollbar-thumb,
+  .scrollbar-hidden::-webkit-scrollbar-track {
+    display: none;
+    width: 0;
+    height: 0;
+    background: transparent;
+  }
+
+  /** Opt-in: stronger glass chrome (nested scrollers, modals) */
+  .scrollbar-glass {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
 }
 
 .glass-text {

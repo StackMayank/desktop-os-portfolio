@@ -8,32 +8,52 @@ interface DragOpts {
 }
 
 export function useDrag({ onMove, onStart, getStart, disabled }: DragOpts) {
-  const stateRef = useRef({ active: false, sx: 0, sy: 0, ox: 0, oy: 0 });
+  const optsRef = useRef({ onMove, getStart, onStart, disabled });
+  optsRef.current = { onMove, getStart, onStart, disabled };
 
-  const onPointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      if (disabled) return;
-      const start = getStart();
-      stateRef.current = { active: true, sx: e.clientX, sy: e.clientY, ox: start.x, oy: start.y };
-      onStart?.();
-      (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    },
-    [disabled, getStart, onStart]
-  );
+  const dragging = useRef(false);
+  const startRef = useRef({ sx: 0, sy: 0, ox: 0, oy: 0 });
+  const capRef = useRef<{ el: HTMLElement; id: number } | null>(null);
 
-  const onPointerMove = useCallback(
-    (e: React.PointerEvent) => {
-      const s = stateRef.current;
-      if (!s.active) return;
-      onMove(s.ox + e.clientX - s.sx, s.oy + e.clientY - s.sy);
-    },
-    [onMove]
-  );
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    const { disabled: d, getStart: gs, onMove: om, onStart: os } = optsRef.current;
+    if (d) return;
+    e.stopPropagation();
+    const start = gs();
+    dragging.current = true;
+    startRef.current = { sx: e.clientX, sy: e.clientY, ox: start.x, oy: start.y };
+    os?.();
+    const el = e.currentTarget as HTMLElement;
+    capRef.current = { el, id: e.pointerId };
+    el.setPointerCapture(e.pointerId);
 
-  const onPointerUp = useCallback((e: React.PointerEvent) => {
-    stateRef.current.active = false;
-    try { (e.target as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
+    const move = (ev: PointerEvent) => {
+      if (!dragging.current) return;
+      const st = startRef.current;
+      optsRef.current.onMove(st.ox + ev.clientX - st.sx, st.oy + ev.clientY - st.sy);
+    };
+
+    const up = () => {
+      if (!dragging.current) return;
+      dragging.current = false;
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      const c = capRef.current;
+      capRef.current = null;
+      if (c) {
+        try {
+          c.el.releasePointerCapture(c.id);
+        } catch {
+          /* noop */
+        }
+      }
+    };
+
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
   }, []);
 
-  return { onPointerDown, onPointerMove, onPointerUp };
+  return { onPointerDown };
 }

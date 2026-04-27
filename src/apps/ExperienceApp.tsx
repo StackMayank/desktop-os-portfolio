@@ -6,7 +6,7 @@ const JOBS = [
 
 export function ExperienceApp() {
   return (
-    <div className="p-6">
+    <div className="p-6 min-h-0 min-w-0 max-w-full overflow-auto">
       <div className="relative pl-8">
         <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-primary via-accent to-transparent" />
         {JOBS.map((j) => (

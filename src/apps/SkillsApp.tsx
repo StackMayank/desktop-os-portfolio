@@ -7,7 +7,7 @@ const GROUPS = [
 
 export function SkillsApp() {
   return (
-    <div className="p-6 grid sm:grid-cols-2 gap-4">
+    <div className="p-6 grid sm:grid-cols-2 gap-4 min-h-0 min-w-0 max-w-full">
       {GROUPS.map((g) => (
         <div key={g.title} className="glass-soft rounded-xl p-4">
           <h3 className="text-sm font-semibold mb-3 text-primary">{g.title}</h3>

@@ -33,7 +33,7 @@ interface OSState {
   toggleMaximize: (id: AppId, viewport: { w: number; h: number }) => void;
   focusApp: (id: AppId) => void;
   moveWindow: (id: AppId, x: number, y: number) => void;
-  resizeWindow: (id: AppId, w: number, h: number) => void;
+  resizeWindow: (id: AppId, w: number, h: number, x?: number, y?: number) => void;
 }
 
 const defaults = (id: AppId, title: string, x: number, y: number, w = 760, h = 520): WindowState => ({
@@ -63,14 +63,14 @@ export const APP_TITLES: Record<AppId, string> = {
 export const useOS = create<OSState>((set) => ({
   topZ: 10,
   windows: {
-    about: defaults("about", APP_TITLES.about, 140, 90, 720, 520),
-    projects: defaults("projects", APP_TITLES.projects, 200, 110, 880, 560),
-    skills: defaults("skills", APP_TITLES.skills, 180, 130, 760, 520),
-    experience: defaults("experience", APP_TITLES.experience, 220, 100, 760, 540),
-    contact: defaults("contact", APP_TITLES.contact, 240, 140, 620, 540),
-    music: defaults("music", APP_TITLES.music, 260, 120, 720, 560),
-    game: defaults("game", APP_TITLES.game, 280, 150, 700, 540),
-    terminal: defaults("terminal", APP_TITLES.terminal, 160, 160, 720, 460),
+    about: defaults("about", APP_TITLES.about, 140, 90, 720, 470),
+    projects: defaults("projects", APP_TITLES.projects, 200, 110, 880, 520),
+    skills: defaults("skills", APP_TITLES.skills, 180, 130, 760, 440),
+    experience: defaults("experience", APP_TITLES.experience, 220, 100, 760, 500),
+    contact: defaults("contact", APP_TITLES.contact, 240, 140, 620, 430),
+    music: defaults("music", APP_TITLES.music, 260, 120, 720, 500),
+    game: defaults("game", APP_TITLES.game, 280, 150, 700, 470),
+    terminal: defaults("terminal", APP_TITLES.terminal, 160, 160, 720, 420),
   },
   openApp: (id) =>
     set((s) => {
@@ -117,6 +117,17 @@ export const useOS = create<OSState>((set) => ({
     }),
   moveWindow: (id, x, y) =>
     set((s) => ({ windows: { ...s.windows, [id]: { ...s.windows[id], x, y } } })),
-  resizeWindow: (id, width, height) =>
-    set((s) => ({ windows: { ...s.windows, [id]: { ...s.windows[id], width, height } } })),
+  resizeWindow: (id, width, height, x, y) =>
+    set((s) => ({
+      windows: {
+        ...s.windows,
+        [id]: {
+          ...s.windows[id],
+          width,
+          height,
+          ...(typeof x === "number" ? { x } : {}),
+          ...(typeof y === "number" ? { y } : {}),
+        },
+      },
+    })),
 }));

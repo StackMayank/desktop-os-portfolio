@@ -69,10 +69,18 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
   };
 
   return (
-    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none">
+    <div
+      className={`fixed z-[9999] pointer-events-none ${
+        isMobile ? "bottom-2 inset-x-2" : "bottom-3 left-1/2 -translate-x-1/2"
+      }`}
+    >
       <div
         ref={containerRef}
-        className="glass rounded-2xl px-3 py-2 flex items-end gap-2 pointer-events-auto"
+        className={`glass pointer-events-auto ${
+          isMobile
+            ? "rounded-2xl px-2 py-1.5 flex items-center gap-2 overflow-x-auto scrollbar-hidden"
+            : "rounded-2xl px-3 py-2 flex items-end gap-2"
+        }`}
         style={{ boxShadow: "0 20px 60px -10px rgb(0 0 0 / 0.6)" }}
       >
         {APPS.map((a, i) => {
@@ -92,7 +100,9 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
                 style={{ background: `rgba(${a.glow},0.55)` }}
               />
               <div
-                className="relative w-12 h-12 md:w-14 md:h-14 rounded-[1.05rem] flex items-center justify-center text-white overflow-hidden"
+                className={`relative rounded-[1.05rem] flex items-center justify-center text-white overflow-hidden ${
+                  isMobile ? "w-11 h-11 shrink-0" : "w-12 h-12 md:w-14 md:h-14"
+                }`}
                 style={{
                   background: a.gradient,
                   boxShadow: `inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -6px 14px rgba(0,0,0,0.35), inset 0 0 0 0.5px rgba(255,255,255,0.18), 0 8px 18px rgba(0,0,0,0.45), 0 2px 8px rgba(${a.glow},0.45)`,
@@ -110,7 +120,11 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
                 />
                 <a.Icon className="relative w-6 h-6 md:w-7 md:h-7 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
               </div>
-              <span className="absolute -top-9 left-1/2 -translate-x-1/2 text-[11px] font-medium px-2 py-1 rounded-md glass opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+              <span
+                className={`absolute -top-9 left-1/2 -translate-x-1/2 text-[11px] font-medium px-2 py-1 rounded-md glass transition whitespace-nowrap pointer-events-none ${
+                  isMobile ? "hidden" : "opacity-0 group-hover:opacity-100"
+                }`}
+              >
                 {a.label}
               </span>
               {w.isOpen && (

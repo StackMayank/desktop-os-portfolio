@@ -8,7 +8,7 @@ export function AboutApp() {
     { year: "2021", text: "Wrote my first line of TypeScript. Never looked back." },
   ];
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-6 sm:p-8 space-y-6 min-h-0 min-w-0 max-w-full">
       <div className="flex items-center gap-4">
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl font-bold text-primary-foreground">M</div>
         <div>

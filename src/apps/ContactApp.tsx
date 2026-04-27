@@ -4,7 +4,7 @@ import { Send, Github, Linkedin, Mail } from "lucide-react";
 export function ContactApp() {
   const [sent, setSent] = useState(false);
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-6 space-y-5 min-h-0 min-w-0 max-w-full">
       <div>
         <h2 className="text-xl font-semibold">Get in touch</h2>
         <p className="text-sm text-muted-foreground">Always open to interesting work and conversations.</p>

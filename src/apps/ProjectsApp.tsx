@@ -17,13 +17,13 @@ export function ProjectsApp() {
 
   if (selected) {
     return (
-      <div className="flex flex-col h-full">
-        <div className="px-5 py-3 border-b border-glass-border flex items-center gap-3">
+      <div className="flex flex-col h-full min-h-0 min-w-0">
+        <div className="px-5 py-3 border-b border-glass-border flex items-center gap-3 shrink-0">
           <button onClick={() => setSelected(null)} className="hover:text-primary"><ArrowLeft className="w-4 h-4" /></button>
           <div className="font-medium">{selected.name}</div>
           <span className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary">{selected.tag}</span>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 flex-1 min-h-0 overflow-auto">
           <p className="text-sm leading-relaxed text-foreground/90">{selected.desc}</p>
           <div>
             <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Tech</div>
@@ -42,8 +42,8 @@ export function ProjectsApp() {
   }
 
   return (
-    <div className="flex h-full">
-      <aside className="w-44 border-r border-glass-border p-3 hidden md:block text-sm">
+    <div className="flex h-full min-h-0 min-w-0">
+      <aside className="w-36 sm:w-44 shrink-0 border-r border-glass-border p-3 hidden md:block text-sm">
         <div className="text-xs uppercase text-muted-foreground mb-2">Favourites</div>
         <div className="space-y-1">
           <div className="px-2 py-1 rounded bg-primary/20 text-primary">Projects</div>
@@ -51,8 +51,8 @@ export function ProjectsApp() {
           <div className="px-2 py-1 rounded hover:bg-white/5 text-muted-foreground">Archive</div>
         </div>
       </aside>
-      <div className="flex-1 flex flex-col">
-        <div className="px-4 py-2 flex items-center justify-between border-b border-glass-border">
+      <div className="flex-1 flex flex-col min-h-0 min-w-0">
+        <div className="px-4 py-2 flex items-center justify-between border-b border-glass-border shrink-0">
           <div className="text-sm text-muted-foreground">{PROJECTS.length} items</div>
           <div className="flex gap-1">
             <button onClick={() => setView("grid")} className={`p-1.5 rounded ${view === "grid" ? "bg-white/10" : ""}`}><LayoutGrid className="w-4 h-4" /></button>

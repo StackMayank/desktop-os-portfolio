@@ -17,13 +17,13 @@ export function CalendarWidget() {
   }, [today.getMonth(), today.getFullYear()]);
 
   return (
-    <div className="w-60">
-      <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Calendar</div>
-      <div className="text-sm font-medium mb-2">{monthLabel}</div>
-      <div className="grid grid-cols-7 gap-1 text-[10px] text-muted-foreground mb-1">
+    <div className="w-full min-w-0 h-full min-h-0 flex flex-col">
+      <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1 shrink-0">Calendar</div>
+      <div className="text-sm font-medium mb-2 truncate shrink-0" title={monthLabel}>{monthLabel}</div>
+      <div className="grid grid-cols-7 gap-0.5 sm:gap-1 text-[10px] text-muted-foreground mb-1 shrink-0">
         {["S","M","T","W","T","F","S"].map((d, i) => <div key={i} className="text-center">{d}</div>)}
       </div>
-      <div className="grid grid-cols-7 gap-1 text-xs">
+      <div className="grid grid-cols-7 gap-0.5 sm:gap-1 text-[10px] sm:text-xs min-w-0 flex-1 content-start">
         {days.map((d, i) => (
           <div
             key={i}

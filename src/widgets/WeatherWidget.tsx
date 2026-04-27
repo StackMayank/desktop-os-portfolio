@@ -17,17 +17,17 @@ export function WeatherWidget() {
   const Icon = data ? iconFor(data.code) : Cloud;
 
   return (
-    <div className="w-44">
-      <div className="text-xs uppercase tracking-widest text-muted-foreground">Weather</div>
+    <div className="w-full min-w-0 h-full min-h-0 flex flex-col">
+      <div className="text-xs uppercase tracking-widest text-muted-foreground shrink-0">Weather</div>
       {loading && <div className="text-sm mt-3 text-muted-foreground">Loading…</div>}
       {error && <div className="text-sm mt-3 text-destructive">Offline</div>}
       {data && (
         <>
-          <div className="flex items-center gap-3 mt-2">
-            <Icon className="w-10 h-10 text-primary" />
-            <div className="text-3xl font-light tabular-nums">{data.temp}°</div>
+          <div className="flex items-center gap-2 sm:gap-3 mt-2 min-w-0 shrink-0">
+            <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-primary shrink-0" />
+            <div className="text-[clamp(1.25rem,4vmin,1.875rem)] font-light tabular-nums min-w-0">{data.temp}°</div>
           </div>
-          <div className="text-xs text-muted-foreground mt-1">{condition} · {data.city}</div>
+          <div className="text-xs text-muted-foreground mt-1 min-w-0 break-words">{condition} · {data.city}</div>
         </>
       )}
     </div>

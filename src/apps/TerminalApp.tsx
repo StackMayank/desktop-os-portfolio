@@ -62,7 +62,7 @@ export function TerminalApp() {
 
   return (
     <div
-      className="h-full bg-black/70 font-mono text-[13px] p-3 text-emerald-200 overflow-auto"
+      className="h-full min-h-0 min-w-0 bg-black/70 font-mono text-[13px] p-3 text-emerald-200 overflow-auto"
       onClick={() => inputRef.current?.focus()}
     >
       {lines.map((l, i) => (
