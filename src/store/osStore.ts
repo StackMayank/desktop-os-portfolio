@@ -68,9 +68,10 @@ export const APP_TITLES: Record<AppId, string> = {
 export const useOS = create<OSState>((set) => ({
   topZ: 100,
   windows: {
-    about: defaults("about", APP_TITLES.about, 140, 90, 720, 470),
+    /** Open in dock on load; recruiter restores from dock when ready */
+    about: { ...defaults("about", APP_TITLES.about, 140, 90, 720, 470), isOpen: true, isMinimized: true, zIndex: 10 },
     docs: defaults("docs", APP_TITLES.docs, 200, 110, 540, 300),
-    projects: defaults("projects", APP_TITLES.projects, 320, 120, 580, 380),
+    projects: defaults("projects", APP_TITLES.projects, 280, 120, 740, 400),
     preview: defaults("preview", APP_TITLES.preview, 260, 100, 480, 560),
     skills: defaults("skills", APP_TITLES.skills, 180, 130, 760, 440),
     experience: defaults("experience", APP_TITLES.experience, 220, 100, 760, 500),

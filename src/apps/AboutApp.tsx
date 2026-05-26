@@ -27,7 +27,7 @@ export function AboutApp() {
       </div>
       <div className="glass-soft rounded-xl p-5">
         <div className="flex items-center gap-2 text-sm text-primary mb-2"><Sparkles className="w-4 h-4" /> Philosophy</div>
-        <p className="text-sm leading-relaxed text-foreground/90">
+        <p className="text-sm leading-relaxed text-foreground">
         I started by building landing pages and conversion funnels, focused on performance and user behavior.
 But while marketing products, I became obsessed with how great digital experiences were actually built.
 
@@ -41,7 +41,7 @@ Now, I build the experiences I once only marketed.
           {timeline.map((t) => (
             <li key={t.year} className="flex gap-4">
               <span className="w-14 text-primary font-mono text-sm pt-0.5">{t.year}</span>
-              <span className="text-sm text-foreground/85 flex-1">{t.text}</span>
+              <span className="text-sm text-foreground/95 flex-1">{t.text}</span>
             </li>
           ))}
         </ul>

@@ -6,34 +6,27 @@ interface ProjectDetailViewProps {
 }
 
 export function ProjectDetailView({ project }: ProjectDetailViewProps) {
-  const imageMax = project.imageSize;
-  const shellMaxW = imageMax ? imageMax.width + 32 : undefined;
+  const imageMax = project.imageSize ?? { width: 720, height: 400 };
 
   return (
-    <div
-      className="p-4 space-y-4 mx-auto w-full"
-      style={{
-        maxWidth: shellMaxW
-          ? `min(96vw, ${shellMaxW}px)`
-          : "min(96vw, 56rem)",
-      }}
-    >
-      <div className="rounded-xl overflow-hidden border border-glass-border glass-soft bg-black/20 flex justify-center items-center p-1">
-        <img
-          src={project.image}
-          alt={project.title}
-          className="w-full h-auto block object-contain mx-auto"
-          style={
-            imageMax
-              ? { maxWidth: imageMax.width, maxHeight: imageMax.height, width: "100%" }
-              : undefined
-          }
-          loading="lazy"
-          draggable={false}
-        />
-      </div>
+    <div className="w-full max-w-full px-5 py-5 sm:px-8 sm:py-6 space-y-6 box-border">
+      <figure className="w-full flex justify-center m-0">
+        <div className="inline-flex max-w-full items-center justify-center rounded-xl border border-glass-border glass-soft bg-black/30 p-2 sm:p-2.5 shadow-lg leading-none">
+          <img
+            src={project.image}
+            alt={project.title}
+            className="block max-w-full w-auto h-auto object-contain object-center"
+            style={{
+              maxWidth: `${imageMax.width}px`,
+              maxHeight: `${imageMax.height}px`,
+            }}
+            loading="lazy"
+            draggable={false}
+          />
+        </div>
+      </figure>
 
-      <div>
+      <div className="w-full">
         <div className="flex flex-wrap items-center gap-3 mb-2">
           <h2 className="text-base font-semibold text-white">{project.title}</h2>
           {project.projectUrl ? (
@@ -56,7 +49,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
         </ul>
       </div>
 
-      <div>
+      <div className="w-full">
         <p className="text-xs uppercase tracking-widest text-white/60 mb-2">Tech stack</p>
         <div className="flex flex-wrap gap-2">
           {project.stack.map((tech) => (

@@ -56,6 +56,11 @@ function WindowComponent({ id, children, isMobile, fitContent = false }: Props) 
 
   if (!win.isOpen) return null;
 
+  /** fitContent windows stay compact until maximized; projects always fills frame for scroll */
+  const shrinkToContent = fitContent && !isMobile && !win.isMaximized && id !== "projects";
+  /** Projects scroll inside FinderBrowser so the bar stays on the content edge */
+  const scrollInChild = id === "projects";
+
   const windowMotion = isMobile ? WINDOW_MOTION_MOBILE : WINDOW_MOTION;
   const style = isMobile
     ? { zIndex: win.zIndex }
@@ -152,14 +157,18 @@ function WindowComponent({ id, children, isMobile, fitContent = false }: Props) 
           </div>
           <div
             className={
-              fitContent && !isMobile
-                ? "min-h-0 min-w-0 overflow-auto overscroll-contain scrollbar-hidden"
-                : "flex-1 min-h-0 min-w-0 overflow-auto overscroll-contain scrollbar-hidden"
+              scrollInChild
+                ? "flex-1 min-h-0 min-w-0 overflow-hidden bg-[var(--window-content)]"
+                : shrinkToContent
+                  ? "min-h-0 min-w-0 overflow-auto overscroll-contain scrollbar-hidden bg-[var(--window-content)]"
+                  : "flex-1 min-h-0 min-w-0 overflow-auto overscroll-contain scrollbar-hidden bg-[var(--window-content)]"
             }
           >
             <div
               className={
-                fitContent && !isMobile ? "min-h-0 min-w-0" : "h-full min-h-0 min-w-0"
+                scrollInChild || !shrinkToContent
+                  ? "h-full min-h-0 min-w-0 flex flex-col"
+                  : "min-h-0 min-w-0"
               }
             >
               {children}

@@ -39,7 +39,7 @@ export const PROJECTS: Record<ProjectId, ProjectContent> = {
       "Framer Motion",
     ],
     projectUrl: "https://staybookers.vercel.app/",
-    imageSize: { width: 560, height: 320 },
+    imageSize: { width: 720, height: 400 },
   },
   "portfolio-os": {
     id: "portfolio-os",
@@ -64,7 +64,7 @@ export const PROJECTS: Record<ProjectId, ProjectContent> = {
       "Framer Motion",
       "GSAP",
     ],
-    imageSize: { width: 560, height: 320 },
+    imageSize: { width: 680, height: 380 },
   },
 };
 
