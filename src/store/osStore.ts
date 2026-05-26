@@ -3,6 +3,7 @@ import { create } from "zustand";
 export type AppId =
   | "about"
   | "docs"
+  | "projects"
   | "preview"
   | "skills"
   | "experience"
@@ -53,7 +54,8 @@ const defaults = (id: AppId, title: string, x: number, y: number, w = 760, h = 5
 
 export const APP_TITLES: Record<AppId, string> = {
   about: "About Me",
-  docs: "Docs — Finder",
+  docs: "Docs Finder",
+  projects: "Project and resume",
   preview: "Resume",
   skills: "Skills",
   experience: "Experience",
@@ -68,6 +70,7 @@ export const useOS = create<OSState>((set) => ({
   windows: {
     about: defaults("about", APP_TITLES.about, 140, 90, 720, 470),
     docs: defaults("docs", APP_TITLES.docs, 200, 110, 540, 300),
+    projects: defaults("projects", APP_TITLES.projects, 320, 120, 580, 380),
     preview: defaults("preview", APP_TITLES.preview, 260, 100, 480, 560),
     skills: defaults("skills", APP_TITLES.skills, 180, 130, 760, 440),
     experience: defaults("experience", APP_TITLES.experience, 220, 100, 760, 500),
@@ -79,12 +82,16 @@ export const useOS = create<OSState>((set) => ({
   openApp: (id) =>
     set((s) => {
       const z = s.topZ + 1;
+      const current = s.windows[id];
+      let next: WindowState = {
+        ...current,
+        isOpen: true,
+        isMinimized: false,
+        zIndex: z,
+      };
       return {
         topZ: z,
-        windows: {
-          ...s.windows,
-          [id]: { ...s.windows[id], isOpen: true, isMinimized: false, zIndex: z },
-        },
+        windows: { ...s.windows, [id]: next },
       };
     }),
   closeApp: (id) =>

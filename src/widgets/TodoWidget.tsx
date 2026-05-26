@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Plus, Check, Pencil, X } from "lucide-react";
 
 interface Task { id: string; text: string; done: boolean }
 const KEY = "todo:list";
 type Filter = "all" | "todo" | "completed";
 
-export function TodoWidget() {
+function TodoWidgetComponent() {
   const [tasks, setTasks] = useState<Task[]>(() => {
     try {
       const r = localStorage.getItem(KEY);
@@ -68,7 +68,7 @@ export function TodoWidget() {
 
   return (
     <div className="w-full min-w-0 h-full min-h-0 flex flex-col">
-      <div className="text-xs uppercase tracking-widest text-white/80 mb-2 shrink-0">To-Do</div>
+      <div className="widget-header mb-2 shrink-0">To-Do</div>
       <div className="flex gap-1 mb-2 shrink-0" onPointerDown={(e) => e.stopPropagation()}>
         <input
           value={text}
@@ -81,7 +81,7 @@ export function TodoWidget() {
           type="button"
           onClick={add}
           aria-label="Add task"
-          className="flex items-center justify-center w-7 h-7 shrink-0 rounded-[22.37%] bg-primary/80 hover:bg-primary text-primary-foreground transition-colors"
+          className="flex items-center justify-center w-7 h-7 shrink-0 rounded-[22.37%] bg-widget-accent hover:brightness-95 text-on-widget-accent transition-[filter]"
         >
           <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
         </button>
@@ -97,7 +97,7 @@ export function TodoWidget() {
             onClick={() => setFilter(tab.key as Filter)}
             className={`rounded-full px-2.5 py-1 text-[11px] transition-colors ${
               filter === tab.key
-                ? "bg-primary/80 text-primary-foreground"
+                ? "bg-widget-accent text-on-widget-accent"
                 : "bg-black/20 text-white/70 hover:text-white hover:bg-white/10"
             }`}
           >
@@ -117,7 +117,7 @@ export function TodoWidget() {
               aria-label={t.done ? "Mark as incomplete" : "Mark as complete"}
               className={`w-4 h-4 shrink-0 rounded-full border flex items-center justify-center transition-colors ${
                 t.done
-                  ? "bg-primary border-primary text-primary-foreground"
+                  ? "bg-widget-accent border-widget-accent text-on-widget-accent"
                   : "border-white/40 bg-white/5 hover:border-white/60"
               }`}
             >
@@ -181,3 +181,5 @@ export function TodoWidget() {
     </div>
   );
 }
+
+export const TodoWidget = memo(TodoWidgetComponent);

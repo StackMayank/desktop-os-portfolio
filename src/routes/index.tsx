@@ -1,9 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Desktop } from "@/components/Desktop";
+import { DesktopWithIntro } from "@/components/intro/IntroGate";
+import { WALLPAPER_URL } from "@/lib/wallpaper";
 
 export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
+    links: [
+      {
+        rel: "preload",
+        href: WALLPAPER_URL,
+        as: "image",
+        fetchPriority: "high",
+      },
+    ],
     meta: [
       { title: "Mayank — Portfolio OS" },
       {
@@ -23,5 +32,5 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return <Desktop />;
+  return <DesktopWithIntro />;
 }

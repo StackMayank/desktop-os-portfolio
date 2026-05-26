@@ -9,8 +9,22 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 export default defineConfig({
   vite: {
     build: {
-      // Keep full-res wallpaper as a separate file (never inline/compress as base64)
       assetsInlineLimit: 0,
+      target: "es2020",
+      cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules/framer-motion")) return "motion";
+            if (id.includes("node_modules/gsap")) return "gsap";
+            if (id.includes("node_modules/lucide-react")) return "icons";
+          },
+        },
+      },
+    },
+    esbuild: {
+      drop: ["console", "debugger"],
+      legalComments: "none",
     },
   },
 });

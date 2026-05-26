@@ -19,12 +19,14 @@ const APP_CONFIG: Record<
 > = {
   about: { label: "About", Icon: User, accent: "text-sky-300" },
   docs: { label: "Resume", Icon: FileText, accent: "text-blue-300" },
+  projects: { label: "Projects", Icon: FileText, accent: "text-sky-300" },
   skills: { label: "Skills", Icon: BarChart3, accent: "text-violet-300" },
   experience: { label: "Experience", Icon: Briefcase, accent: "text-amber-300" },
   contact: { label: "Contact", Icon: Mail, accent: "text-cyan-300" },
   music: { label: "Music", Icon: Music, accent: "text-rose-300" },
   game: { label: "Game", Icon: Gamepad2, accent: "text-emerald-300" },
   terminal: { label: "Terminal", Icon: Terminal, accent: "text-green-400" },
+  preview: { label: "Resume", Icon: FileText, accent: "text-blue-300" },
 };
 
 interface DockAppIconProps {

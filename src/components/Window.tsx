@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from "react";
+import { memo, useRef, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOS, type AppId } from "@/store/osStore";
 import { useDrag } from "@/hooks/useDrag";
@@ -11,7 +11,21 @@ interface Props {
   fitContent?: boolean;
 }
 
-export function Window({ id, children, isMobile, fitContent = false }: Props) {
+const WINDOW_MOTION = {
+  initial: { opacity: 0, scale: 0.92, y: 12 },
+  animate: { opacity: 1, scale: 1, y: 0 },
+  exit: { opacity: 0, scale: 0.9, y: 20 },
+  transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] as const },
+};
+
+const WINDOW_MOTION_MOBILE = {
+  initial: { opacity: 0, scale: 1, y: 0 },
+  animate: { opacity: 1, scale: 1, y: 0 },
+  exit: { opacity: 0, scale: 1, y: 0 },
+  transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const },
+};
+
+function WindowComponent({ id, children, isMobile, fitContent = false }: Props) {
   const win = useOS((s) => s.windows[id]);
   const focusApp = useOS((s) => s.focusApp);
   const closeApp = useOS((s) => s.closeApp);
@@ -42,6 +56,7 @@ export function Window({ id, children, isMobile, fitContent = false }: Props) {
 
   if (!win.isOpen) return null;
 
+  const windowMotion = isMobile ? WINDOW_MOTION_MOBILE : WINDOW_MOTION;
   const style = isMobile
     ? { zIndex: win.zIndex }
     : {
@@ -57,10 +72,10 @@ export function Window({ id, children, isMobile, fitContent = false }: Props) {
       {!win.isMinimized && (
         <motion.div
           key={id}
-          initial={{ opacity: 0, scale: isMobile ? 1 : 0.92, y: isMobile ? 0 : 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: isMobile ? 1 : 0.9, y: isMobile ? 0 : 20 }}
-          transition={{ type: "spring", stiffness: 320, damping: 28 }}
+          initial={windowMotion.initial}
+          animate={windowMotion.animate}
+          exit={windowMotion.exit}
+          transition={windowMotion.transition}
           className={
             isMobile
               ? "fixed inset-x-0 top-[calc(1.75rem+env(safe-area-inset-top,0px))] bottom-0 z-[200] glass-strong rounded-none overflow-hidden flex flex-col min-h-0 min-w-0 touch-pan-y"
@@ -138,8 +153,8 @@ export function Window({ id, children, isMobile, fitContent = false }: Props) {
           <div
             className={
               fitContent && !isMobile
-                ? "min-h-0 min-w-0 overflow-auto overscroll-contain"
-                : "flex-1 min-h-0 min-w-0 overflow-auto overscroll-contain"
+                ? "min-h-0 min-w-0 overflow-auto overscroll-contain scrollbar-hidden"
+                : "flex-1 min-h-0 min-w-0 overflow-auto overscroll-contain scrollbar-hidden"
             }
           >
             <div
@@ -155,3 +170,5 @@ export function Window({ id, children, isMobile, fitContent = false }: Props) {
     </AnimatePresence>
   );
 }
+
+export const Window = memo(WindowComponent);

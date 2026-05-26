@@ -1,5 +1,6 @@
+import { memo } from "react";
 import { Cloud, CloudRain, Sun, CloudSnow, CloudFog, Zap, CloudDrizzle } from "lucide-react";
-import { useWeather } from "@/hooks/useWeather";
+import { useWeather } from "@/context/WeatherProvider";
 
 const iconFor = (code: number) => {
   if (code === 0) return Sun;
@@ -12,15 +13,13 @@ const iconFor = (code: number) => {
   return Cloud;
 };
 
-export function WeatherWidget() {
+function WeatherWidgetComponent() {
   const { data, error, loading, condition } = useWeather();
   const Icon = data ? iconFor(data.code) : Cloud;
 
   return (
     <div className="w-full min-w-0 flex flex-col justify-start">
-      <div className="text-xs uppercase tracking-widest text-white/80 shrink-0">
-        Weather
-      </div>
+      <div className="widget-header shrink-0">Weather</div>
       {loading && (
         <p className="text-xs text-white/70 mt-2 leading-snug">Loading…</p>
       )}
@@ -30,7 +29,7 @@ export function WeatherWidget() {
       {data && (
         <>
           <div className="flex items-center gap-2 mt-2 shrink-0">
-            <Icon className="w-7 h-7 text-white/90 shrink-0" strokeWidth={1.75} />
+            <Icon className="w-7 h-7 text-widget-accent shrink-0" strokeWidth={1.75} />
             <span className="font-light tabular-nums leading-none text-glow text-[clamp(1.5rem,5vmin,2.25rem)]">
               {data.temp}°
             </span>
@@ -43,3 +42,5 @@ export function WeatherWidget() {
     </div>
   );
 }
+
+export const WeatherWidget = memo(WeatherWidgetComponent);

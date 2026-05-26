@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { useShallow } from "zustand/react/shallow";
 import { useOS, type AppId } from "@/store/osStore";
 import { DockAppIcon, getDockAppLabel } from "@/components/dock/DockAppIcon";
 
@@ -44,7 +45,7 @@ function magnificationAt(distance: number) {
   };
 }
 
-function DockButton({
+const DockButton = memo(function DockButton({
   id,
   isMobile,
   isOpen,
@@ -84,20 +85,27 @@ function DockButton({
       )}
     </button>
   );
-}
+});
 
-export function Dock({ isMobile }: { isMobile: boolean }) {
+export const Dock = memo(function Dock({ isMobile }: { isMobile: boolean }) {
   const openApp = useOS((s) => s.openApp);
   const focusApp = useOS((s) => s.focusApp);
-  const windows = useOS((s) => s.windows);
+  const dockOpen = useOS(
+    useShallow((s) => {
+      const flags = {} as Record<AppId, boolean>;
+      for (const id of APP_IDS) {
+        flags[id] =
+          id === "docs"
+            ? s.windows.docs.isOpen || s.windows.preview.isOpen
+            : s.windows[id].isOpen;
+      }
+      return flags;
+    })
+  );
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
   const centersRef = useRef<number[]>([]);
   const [tooltipIndex, setTooltipIndex] = useState<number | null>(null);
-
-  const isAppOpen = (id: AppId) =>
-    id === "docs" ? windows.docs.isOpen || windows.preview.isOpen : windows[id].isOpen;
 
   const measureCenters = useCallback(() => {
     centersRef.current = itemsRef.current.map((el) => {
@@ -115,8 +123,12 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
     const raf = requestAnimationFrame(measureCenters);
     window.addEventListener("resize", measureCenters);
 
-    const onMove = (e: PointerEvent) => {
-      const mouseX = e.clientX;
+    let moveRaf = 0;
+    let pendingX = 0;
+
+    const applyMagnify = () => {
+      moveRaf = 0;
+      const mouseX = pendingX;
       let peakIndex: number | null = null;
       let peakDist = PEAK_RADIUS;
 
@@ -142,6 +154,12 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
       setTooltipIndex(peakIndex);
     };
 
+    const onMove = (e: PointerEvent) => {
+      pendingX = e.clientX;
+      if (moveRaf) return;
+      moveRaf = requestAnimationFrame(applyMagnify);
+    };
+
     const onLeave = () => {
       setTooltipIndex(null);
       itemsRef.current.forEach((el) =>
@@ -155,45 +173,47 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
     container.addEventListener("pointerleave", onLeave);
     return () => {
       cancelAnimationFrame(raf);
+      if (moveRaf) cancelAnimationFrame(moveRaf);
       window.removeEventListener("resize", measureCenters);
       container.removeEventListener("pointermove", onMove);
       container.removeEventListener("pointerleave", onLeave);
     };
   }, [isMobile, measureCenters]);
 
-  const handleClick = (id: AppId) => {
-    if (id === "contact") {
-      window.open("https://wa.link/pf9ivh", "_blank", "noopener,noreferrer");
-      return;
-    }
-
-    if (id === "docs") {
-      const docsWin = windows.docs;
-      const previewWin = windows.preview;
-      if (previewWin.isOpen && !previewWin.isMinimized) {
-        focusApp("preview");
-        if (!docsWin.isOpen) openApp("docs");
+  const handleClick = useCallback(
+    (id: AppId) => {
+      if (id === "contact") {
+        window.open("https://wa.link/pf9ivh", "_blank", "noopener,noreferrer");
         return;
       }
-      if (docsWin.isOpen && !docsWin.isMinimized) {
+
+      const windows = useOS.getState().windows;
+
+      if (id === "docs") {
+        const docsWin = windows.docs;
+        if (docsWin.isOpen && !docsWin.isMinimized) {
+          focusApp("preview");
+          return;
+        }
+        openApp("docs");
         openApp("preview");
+        focusApp("preview");
         return;
       }
-      openApp("docs");
-      return;
-    }
 
-    const w = windows[id];
-    if (w.isOpen && !w.isMinimized) focusApp(id);
-    else openApp(id);
-  };
+      const w = windows[id];
+      if (w.isOpen && !w.isMinimized) focusApp(id);
+      else openApp(id);
+    },
+    [focusApp, openApp]
+  );
 
   const renderIcon = (id: AppId, index: number) => (
     <DockButton
       key={id}
       id={id}
       isMobile={isMobile}
-      isOpen={isAppOpen(id)}
+      isOpen={dockOpen[id]}
       showTooltip={!isMobile && tooltipIndex === index}
       onClick={() => handleClick(id)}
       setMagnifyRef={(el) => {
@@ -212,6 +232,7 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
     >
       <div
         ref={containerRef}
+        data-desktop-enter="dock"
         className={`pointer-events-auto glass ${
           isMobile
             ? "rounded-[24px] py-2.5 overflow-hidden mx-auto flex items-center justify-center"
@@ -220,10 +241,7 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
         style={isMobile ? MOBILE_DOCK_STYLE : undefined}
       >
         {isMobile ? (
-          <div
-            ref={scrollRef}
-            className="dock-scroll flex items-center justify-start gap-2.5 overflow-x-auto scrollbar-hidden px-3 py-1 w-full"
-          >
+          <div className="dock-scroll flex items-center justify-start gap-2.5 overflow-x-auto scrollbar-hidden px-3 py-1 w-full">
             {APP_IDS.map((id, i) => renderIcon(id, i))}
           </div>
         ) : (
@@ -232,4 +250,4 @@ export function Dock({ isMobile }: { isMobile: boolean }) {
       </div>
     </div>
   );
-}
+});

@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
-export function CalendarWidget() {
+function CalendarWidgetComponent() {
   const today = new Date();
   const { days, monthLabel } = useMemo(() => {
     const y = today.getFullYear();
@@ -19,7 +19,7 @@ export function CalendarWidget() {
 
   return (
     <div className="w-full min-w-0 min-h-[248px] flex flex-col justify-start">
-      <div className="text-xs uppercase tracking-widest text-white/80 mb-1 shrink-0">Calendar</div>
+      <div className="widget-header mb-1 shrink-0">Calendar</div>
       <div className="text-sm font-medium mb-2 truncate shrink-0 text-white" title={monthLabel}>
         {monthLabel}
       </div>
@@ -39,7 +39,7 @@ export function CalendarWidget() {
             }`}
           >
             {d === todayNum ? (
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-black font-semibold">
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-widget-accent text-on-widget-accent font-semibold">
                 {d}
               </span>
             ) : (
@@ -51,3 +51,5 @@ export function CalendarWidget() {
     </div>
   );
 }
+
+export const CalendarWidget = memo(CalendarWidgetComponent);

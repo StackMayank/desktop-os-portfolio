@@ -180,6 +180,16 @@
     -webkit-backdrop-filter: blur(28px) saturate(180%);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-glass);
+    contain: layout style;
+  }
+
+  @media (max-width: 768px) {
+    .glass,
+    .glass-strong,
+    .glass-soft {
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+    }
   }
 
   /** Desktop/mobile widgets — rounded squircle like macOS */
@@ -187,6 +197,30 @@
     border-radius: 1.375rem;
     overflow: hidden;
     isolation: isolate;
+  }
+
+  .widget-header {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: oklch(1 0 0 / 0.9);
+    line-height: 1.25;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  .bg-widget-accent {
+    background-color: #fec5ba;
+  }
+  .text-widget-accent {
+    color: #fec5ba;
+  }
+  .border-widget-accent {
+    border-color: #fec5ba;
+  }
+  .text-on-widget-accent {
+    color: #3a2822;
   }
   .glass-strong {
     background-color: var(--glass-strong);
