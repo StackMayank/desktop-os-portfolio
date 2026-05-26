@@ -1,0 +1,13 @@
+{
+  "name": "portfolio-os",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix desktop-os-portfolio",
+    "build": "npm run build --prefix desktop-os-portfolio",
+    "build:dev": "npm run build:dev --prefix desktop-os-portfolio",
+    "preview": "npm run preview --prefix desktop-os-portfolio",
+    "lint": "npm run lint --prefix desktop-os-portfolio",
+    "format": "npm run format --prefix desktop-os-portfolio",
+    "postinstall": "npm install --prefix desktop-os-portfolio"
+  }
+}
