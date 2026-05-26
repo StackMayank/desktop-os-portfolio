@@ -87,6 +87,11 @@
   opacity: 1;
 }
 
+/* Hide chrome until GSAP entrance runs (prevents folder/widget flash on intro exit) */
+.intro-site--reveal [data-desktop-enter] {
+  opacity: 0;
+}
+
 @keyframes intro-logo-in {
   to {
     opacity: 1;

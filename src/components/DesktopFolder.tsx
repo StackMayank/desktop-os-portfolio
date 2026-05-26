@@ -153,6 +153,7 @@ export function DesktopFolder({ label, appId, isMobile = false }: DesktopFolderP
         }
       }}
       onPointerDown={drag.onPointerDown}
+      data-desktop-enter="widget"
       className={`absolute z-[6] ${folderButtonClass}`}
       style={{ left: frame.x, top: frame.y }}
       aria-label={`Open ${label}`}
