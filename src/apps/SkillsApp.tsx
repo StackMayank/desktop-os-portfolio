@@ -1,8 +1,28 @@
-const GROUPS = [
-  { title: "Frontend", items: [["React", 95], ["TypeScript", 92], ["Tailwind", 95], ["Framer Motion", 88], ["GSAP", 80]] as [string, number][] },
-  { title: "Backend", items: [["Node.js", 85], ["tRPC", 80], ["Postgres", 78], ["Edge Functions", 82]] as [string, number][] },
-  { title: "Tooling", items: [["Vite", 92], ["Vitest", 80], ["Playwright", 75], ["Git", 90]] as [string, number][] },
-  { title: "Design", items: [["Figma", 82], ["Motion", 85], ["Glassmorphism", 90]] as [string, number][] },
+const GROUPS: { title: string; items: string[] }[] = [
+  {
+    title: "Languages",
+    items: ["JavaScript", "TypeScript", "CSS", "HTML"],
+  },
+  {
+    title: "Frameworks",
+    items: ["Next.js", "React", "Tailwind CSS"],
+  },
+  {
+    title: "State Management",
+    items: ["Redux Toolkit", "Zustand"],
+  },
+  {
+    title: "Platforms",
+    items: ["Vercel", "Netlify", "Firebase", "Supabase", "MongoDB Atlas", "Render"],
+  },
+  {
+    title: "Tools",
+    items: ["Git", "GitHub", "Postman", "Clerk", "Docker", "Figma"],
+  },
+  {
+    title: "Analytics & Product Scaling",
+    items: ["PostHog", "Google Analytics", "Microsoft Clarity", "Google Ads", "Meta Ads"],
+  },
 ];
 
 export function SkillsApp() {
@@ -11,17 +31,14 @@ export function SkillsApp() {
       {GROUPS.map((g) => (
         <div key={g.title} className="glass-soft rounded-xl p-4">
           <h3 className="text-sm font-semibold mb-3 text-primary">{g.title}</h3>
-          <div className="space-y-2.5">
-            {g.items.map(([name, val]) => (
-              <div key={name}>
-                <div className="flex justify-between text-xs mb-1">
-                  <span>{name}</span>
-                  <span className="text-muted-foreground tabular-nums">{val}%</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-primary to-accent" style={{ width: `${val}%` }} />
-                </div>
-              </div>
+          <div className="flex flex-wrap gap-2">
+            {g.items.map((name) => (
+              <span
+                key={name}
+                className="text-xs px-2.5 py-1 rounded-md glass-soft text-foreground/90"
+              >
+                {name}
+              </span>
             ))}
           </div>
         </div>

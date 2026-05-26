@@ -71,11 +71,11 @@ export function useResize({
     if (!dragging.current) setCursor(null);
   }, []);
 
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
+  const tryPointerDown = useCallback((e: React.PointerEvent): boolean => {
     const o = optsRef.current;
-    if (o.disabled) return;
+    if (o.disabled) return false;
     const { left, right, top, bottom } = getEdges(e.currentTarget as HTMLElement, e.clientX, e.clientY);
-    if (!left && !right && !top && !bottom) return;
+    if (!left && !right && !top && !bottom) return false;
 
     e.stopPropagation();
     e.preventDefault();
@@ -148,7 +148,8 @@ export function useResize({
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
     window.addEventListener("pointercancel", up);
+    return true;
   }, [getEdges, getResizeCursor]);
 
-  return { onPointerDown, onPointerMove, onPointerLeave, cursor };
+  return { tryPointerDown, onPointerMove, onPointerLeave, cursor };
 }

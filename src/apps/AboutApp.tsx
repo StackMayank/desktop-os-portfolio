@@ -1,16 +1,25 @@
 import { Sparkles } from "lucide-react";
+import profile from "@/assets/profile.png";
 
 export function AboutApp() {
   const timeline = [
-    { year: "2024", text: "Building Portfolio OS — an interactive macOS-style portfolio." },
-    { year: "2023", text: "Shipped 3 production React apps with millions of interactions." },
-    { year: "2022", text: "Started exploring 3D, motion design, and creative engineering." },
-    { year: "2021", text: "Wrote my first line of TypeScript. Never looked back." },
+    { year: "2026", text: "Completed my frontend development journey and built projects focused on modern web experiences. Now looking to build impactful products with real teams." },
+    { year: "2025", text: "Started an e-commerce business and failed because of the limitations of no-code platforms. That experience pushed me to learn development and build products without limits." },
+    { year: "2024", text: "Joined a startup as a Digital Marketing Specialist and learned end-to-end growth, branding, and product strategy." },
+    { year: "2023", text: "Worked as a Digital Marketing Intern, running ads and building landing pages for high-value clients" },
+    { year: "2022", text: "Learned performance marketing and how digital products scale through strategy and user understanding." },
+    { year: "2021", text: "Started college and built my first client website as a Web Design Intern using no-code tools." },
   ];
   return (
     <div className="p-6 sm:p-8 space-y-6 min-h-0 min-w-0 max-w-full">
       <div className="flex items-center gap-4">
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl font-bold text-primary-foreground">M</div>
+        <img
+          src={profile}
+          alt="Mayank"
+          className="w-20 h-20 rounded-full object-cover object-center border border-glass-border"
+          draggable={false}
+          decoding="async"
+        />
         <div>
           <h1 className="text-2xl font-semibold">Mayank</h1>
           <p className="text-muted-foreground">Frontend Engineer · Creative Developer</p>
@@ -19,9 +28,11 @@ export function AboutApp() {
       <div className="glass-soft rounded-xl p-5">
         <div className="flex items-center gap-2 text-sm text-primary mb-2"><Sparkles className="w-4 h-4" /> Philosophy</div>
         <p className="text-sm leading-relaxed text-foreground/90">
-          I believe interfaces should feel <em>alive</em> — every transition, every micro-interaction
-          is an opportunity to delight. I obsess over performance, type-safety, and the small details
-          that turn a website into an experience.
+        I started by building landing pages and conversion funnels, focused on performance and user behavior.
+But while marketing products, I became obsessed with how great digital experiences were actually built.
+
+That curiosity pulled me into code, interaction design, and frontend development.
+Now, I build the experiences I once only marketed.
         </p>
       </div>
       <div>

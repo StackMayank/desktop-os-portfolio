@@ -2,7 +2,8 @@ import { create } from "zustand";
 
 export type AppId =
   | "about"
-  | "projects"
+  | "docs"
+  | "preview"
   | "skills"
   | "experience"
   | "contact"
@@ -34,6 +35,7 @@ interface OSState {
   focusApp: (id: AppId) => void;
   moveWindow: (id: AppId, x: number, y: number) => void;
   resizeWindow: (id: AppId, w: number, h: number, x?: number, y?: number) => void;
+  setWindowTitle: (id: AppId, title: string) => void;
 }
 
 const defaults = (id: AppId, title: string, x: number, y: number, w = 760, h = 520): WindowState => ({
@@ -51,7 +53,8 @@ const defaults = (id: AppId, title: string, x: number, y: number, w = 760, h = 5
 
 export const APP_TITLES: Record<AppId, string> = {
   about: "About Me",
-  projects: "Projects — Finder",
+  docs: "Docs — Finder",
+  preview: "Resume",
   skills: "Skills",
   experience: "Experience",
   contact: "Contact",
@@ -61,10 +64,11 @@ export const APP_TITLES: Record<AppId, string> = {
 };
 
 export const useOS = create<OSState>((set) => ({
-  topZ: 10,
+  topZ: 100,
   windows: {
     about: defaults("about", APP_TITLES.about, 140, 90, 720, 470),
-    projects: defaults("projects", APP_TITLES.projects, 200, 110, 880, 520),
+    docs: defaults("docs", APP_TITLES.docs, 200, 110, 540, 300),
+    preview: defaults("preview", APP_TITLES.preview, 260, 100, 480, 560),
     skills: defaults("skills", APP_TITLES.skills, 180, 130, 760, 440),
     experience: defaults("experience", APP_TITLES.experience, 220, 100, 760, 500),
     contact: defaults("contact", APP_TITLES.contact, 240, 140, 620, 430),
@@ -84,9 +88,19 @@ export const useOS = create<OSState>((set) => ({
       };
     }),
   closeApp: (id) =>
-    set((s) => ({
-      windows: { ...s.windows, [id]: { ...s.windows[id], isOpen: false, isMinimized: false, isMaximized: false } },
-    })),
+    set((s) => {
+      const next = { ...s.windows[id], isOpen: false, isMinimized: false, isMaximized: false };
+      const windows = { ...s.windows, [id]: next };
+      if (id === "docs") {
+        windows.preview = {
+          ...s.windows.preview,
+          isOpen: false,
+          isMinimized: false,
+          isMaximized: false,
+        };
+      }
+      return { windows };
+    }),
   minimizeApp: (id) =>
     set((s) => ({ windows: { ...s.windows, [id]: { ...s.windows[id], isMinimized: true } } })),
   toggleMaximize: (id, viewport) =>
@@ -104,7 +118,7 @@ export const useOS = create<OSState>((set) => ({
             x: 0,
             y: 28,
             width: viewport.w,
-            height: viewport.h - 28 - 92,
+            height: viewport.h - 28,
             isMaximized: true,
           },
         },
@@ -129,5 +143,9 @@ export const useOS = create<OSState>((set) => ({
           ...(typeof y === "number" ? { y } : {}),
         },
       },
+    })),
+  setWindowTitle: (id, title) =>
+    set((s) => ({
+      windows: { ...s.windows, [id]: { ...s.windows[id], title } },
     })),
 }));

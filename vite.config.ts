@@ -6,4 +6,11 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+export default defineConfig({
+  vite: {
+    build: {
+      // Keep full-res wallpaper as a separate file (never inline/compress as base64)
+      assetsInlineLimit: 0,
+    },
+  },
+});

@@ -1,7 +1,7 @@
 const JOBS = [
-  { role: "Senior Frontend Engineer", co: "Aurora Labs", years: "2023 — Now", body: "Leading the design system and motion guild. Shipped a realtime collaboration canvas." },
-  { role: "Frontend Engineer", co: "Northwind", years: "2021 — 2023", body: "Built the analytics dashboard used by 12k orgs. Reduced TTI by 38%." },
-  { role: "Web Developer", co: "Freelance", years: "2019 — 2021", body: "Delivered 20+ marketing sites for startups across India and SEA." },
+  { role: "Digital Marketing Specialist", co: "J2l Technologies", years: "july 2024 — December 2024", body: "Managed ₹12L+ in ad spend while leading end-to-end marketing strategy, execution, and marketing teams." },
+  { role: "Digital Marketing Intern", co: "Edify Media", years: "january 2023 — April 2023", body: "Built 3 no-code websites, created 7+ landing pages, and managed ad campaigns worth ₹13,000+ for real clients." },
+  { role: "Web Designer Intern", co: "Ambilimon Digital", years: "September 2021 — December 2021", body: "Delivered 6+ websites using no-code platforms for real clients and managed ad campaigns worth ₹45,000+." },
 ];
 
 export function ExperienceApp() {

@@ -1,141 +1,234 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import {
-  User, FolderKanban, Sparkles, Briefcase, Mail, Music as MusicIcon, Gamepad2, TerminalSquare,
-} from "lucide-react";
 import { useOS, type AppId } from "@/store/osStore";
+import { DockAppIcon, getDockAppLabel } from "@/components/dock/DockAppIcon";
 
-type AppDef = {
-  id: AppId;
-  label: string;
-  Icon: React.ComponentType<{ className?: string }>;
-  gradient: string; // CSS gradient for icon face
-  glow: string;     // rgba glow color
-};
-
-const APPS: AppDef[] = [
-  { id: "about",      label: "About",      Icon: User,           gradient: "linear-gradient(135deg,#7DD3FC 0%,#3B82F6 55%,#1D4ED8 100%)", glow: "59,130,246" },
-  { id: "projects",   label: "Projects",   Icon: FolderKanban,   gradient: "linear-gradient(135deg,#A5B4FC 0%,#6366F1 55%,#3730A3 100%)", glow: "99,102,241" },
-  { id: "skills",     label: "Skills",     Icon: Sparkles,       gradient: "linear-gradient(135deg,#F0ABFC 0%,#C026D3 55%,#7E22CE 100%)", glow: "192,38,211" },
-  { id: "experience", label: "Experience", Icon: Briefcase,      gradient: "linear-gradient(135deg,#FCD34D 0%,#F97316 55%,#B45309 100%)", glow: "249,115,22" },
-  { id: "contact",    label: "Contact",    Icon: Mail,           gradient: "linear-gradient(135deg,#6EE7B7 0%,#10B981 55%,#047857 100%)", glow: "16,185,129" },
-  { id: "music",      label: "Music",      Icon: MusicIcon,      gradient: "linear-gradient(135deg,#FDA4AF 0%,#F43F5E 55%,#9F1239 100%)", glow: "244,63,94" },
-  { id: "game",       label: "Game",       Icon: Gamepad2,       gradient: "linear-gradient(135deg,#BEF264 0%,#22C55E 55%,#15803D 100%)", glow: "34,197,94" },
-  { id: "terminal",   label: "Terminal",   Icon: TerminalSquare, gradient: "linear-gradient(135deg,#3F3F46 0%,#18181B 60%,#000000 100%)", glow: "82,82,91" },
+const APP_IDS: AppId[] = [
+  "about",
+  "docs",
+  "skills",
+  "experience",
+  "contact",
+  "music",
+  "game",
+  "terminal",
 ];
+
+/** Mobile dock viewport: ~4 icons visible, wider pill centered on screen */
+const MOBILE_DOCK_STYLE = {
+  width: "min(calc(100vw - 1.5rem), 22rem)",
+} as const;
+
+const PEAK_RADIUS = 34;
+const NEIGHBOR_RADIUS = 76;
+const MAX_SCALE = 1.55;
+const NEIGHBOR_SCALE = 1.14;
+const MAX_LIFT = -14;
+const NEIGHBOR_LIFT = -5;
+
+function magnificationAt(distance: number) {
+  if (distance >= NEIGHBOR_RADIUS) return { scale: 1, lift: 0 };
+  if (distance < PEAK_RADIUS) {
+    const t = 1 - distance / PEAK_RADIUS;
+    const eased = t * t;
+    return {
+      scale: 1 + eased * (MAX_SCALE - 1),
+      lift: eased * MAX_LIFT,
+    };
+  }
+  const t = 1 - (distance - PEAK_RADIUS) / (NEIGHBOR_RADIUS - PEAK_RADIUS);
+  const eased = t * t;
+  return {
+    scale: 1 + eased * (NEIGHBOR_SCALE - 1),
+    lift: eased * NEIGHBOR_LIFT,
+  };
+}
+
+function DockButton({
+  id,
+  isMobile,
+  isOpen,
+  showTooltip,
+  onClick,
+  setMagnifyRef,
+}: {
+  id: AppId;
+  isMobile: boolean;
+  isOpen: boolean;
+  showTooltip?: boolean;
+  onClick: () => void;
+  setMagnifyRef: (el: HTMLDivElement | null) => void;
+}) {
+  const label = getDockAppLabel(id);
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative shrink-0 touch-manipulation active:opacity-80 flex flex-col items-center justify-end"
+      aria-label={label}
+    >
+      {!isMobile && (
+        <span
+          className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 text-[11px] font-medium px-2 py-0.5 rounded-lg glass-soft whitespace-nowrap pointer-events-none text-foreground/95 transition-opacity duration-150 ${
+            showTooltip ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {label}
+        </span>
+      )}
+      <div ref={isMobile ? undefined : setMagnifyRef} className="dock-magnify-root">
+        <DockAppIcon id={id} size={isMobile ? "sm" : "md"} />
+      </div>
+      {isOpen && (
+        <span className="mt-0.5 w-1 h-1 rounded-full bg-white/90 shrink-0" aria-hidden />
+      )}
+    </button>
+  );
+}
 
 export function Dock({ isMobile }: { isMobile: boolean }) {
   const openApp = useOS((s) => s.openApp);
   const focusApp = useOS((s) => s.focusApp);
   const windows = useOS((s) => s.windows);
   const containerRef = useRef<HTMLDivElement>(null);
-  const itemsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const centersRef = useRef<number[]>([]);
+  const [tooltipIndex, setTooltipIndex] = useState<number | null>(null);
+
+  const isAppOpen = (id: AppId) =>
+    id === "docs" ? windows.docs.isOpen || windows.preview.isOpen : windows[id].isOpen;
+
+  const measureCenters = useCallback(() => {
+    centersRef.current = itemsRef.current.map((el) => {
+      if (!el) return 0;
+      const r = el.getBoundingClientRect();
+      return r.left + r.width / 2;
+    });
+  }, []);
 
   useEffect(() => {
     if (isMobile) return;
     const container = containerRef.current;
     if (!container) return;
 
+    const raf = requestAnimationFrame(measureCenters);
+    window.addEventListener("resize", measureCenters);
+
     const onMove = (e: PointerEvent) => {
-      const rect = container.getBoundingClientRect();
       const mouseX = e.clientX;
-      itemsRef.current.forEach((el) => {
+      let peakIndex: number | null = null;
+      let peakDist = PEAK_RADIUS;
+
+      itemsRef.current.forEach((el, i) => {
         if (!el) return;
-        const r = el.getBoundingClientRect();
-        const center = r.left + r.width / 2;
+        const center = centersRef.current[i] ?? 0;
         const dist = Math.abs(mouseX - center);
-        const max = 120;
-        const scale = dist > max ? 1 : 1 + (1 - dist / max) * 0.55;
-        const lift = dist > max ? 0 : (1 - dist / max) * -10;
-        gsap.to(el, { scale, y: lift, duration: 0.25, ease: "power3.out" });
+        const { scale, lift } = magnificationAt(dist);
+        gsap.to(el, {
+          scale,
+          y: lift,
+          duration: 0.2,
+          ease: "power3.out",
+          overwrite: "auto",
+          force3D: true,
+        });
+        if (dist < peakDist) {
+          peakDist = dist;
+          peakIndex = i;
+        }
       });
-      void rect;
+
+      setTooltipIndex(peakIndex);
     };
+
     const onLeave = () => {
-      itemsRef.current.forEach((el) => el && gsap.to(el, { scale: 1, y: 0, duration: 0.35, ease: "power3.out" }));
+      setTooltipIndex(null);
+      itemsRef.current.forEach((el) =>
+        el &&
+          gsap.to(el, { scale: 1, y: 0, duration: 0.3, ease: "power3.out", overwrite: "auto", force3D: true })
+      );
+      requestAnimationFrame(measureCenters);
     };
+
     container.addEventListener("pointermove", onMove);
     container.addEventListener("pointerleave", onLeave);
     return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", measureCenters);
       container.removeEventListener("pointermove", onMove);
       container.removeEventListener("pointerleave", onLeave);
     };
-  }, [isMobile]);
+  }, [isMobile, measureCenters]);
 
   const handleClick = (id: AppId) => {
+    if (id === "contact") {
+      window.open("https://wa.link/pf9ivh", "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    if (id === "docs") {
+      const docsWin = windows.docs;
+      const previewWin = windows.preview;
+      if (previewWin.isOpen && !previewWin.isMinimized) {
+        focusApp("preview");
+        if (!docsWin.isOpen) openApp("docs");
+        return;
+      }
+      if (docsWin.isOpen && !docsWin.isMinimized) {
+        openApp("preview");
+        return;
+      }
+      openApp("docs");
+      return;
+    }
+
     const w = windows[id];
     if (w.isOpen && !w.isMinimized) focusApp(id);
     else openApp(id);
   };
 
+  const renderIcon = (id: AppId, index: number) => (
+    <DockButton
+      key={id}
+      id={id}
+      isMobile={isMobile}
+      isOpen={isAppOpen(id)}
+      showTooltip={!isMobile && tooltipIndex === index}
+      onClick={() => handleClick(id)}
+      setMagnifyRef={(el) => {
+        itemsRef.current[index] = el;
+      }}
+    />
+  );
+
   return (
     <div
-      className={`fixed z-[9999] pointer-events-none ${
-        isMobile ? "bottom-2 inset-x-2" : "bottom-3 left-1/2 -translate-x-1/2"
+      className={`fixed z-40 pointer-events-none overflow-visible ${
+        isMobile
+          ? "bottom-0 left-0 right-0 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex justify-center items-end px-3"
+          : "bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center justify-end pt-5"
       }`}
     >
       <div
         ref={containerRef}
-        className={`glass pointer-events-auto ${
+        className={`pointer-events-auto glass ${
           isMobile
-            ? "rounded-2xl px-2 py-1.5 flex items-center gap-2 overflow-x-auto scrollbar-hidden"
-            : "rounded-2xl px-3 py-2 flex items-end gap-2"
+            ? "rounded-[24px] py-2.5 overflow-hidden mx-auto flex items-center justify-center"
+            : "rounded-[24px] px-3 py-2.5 flex items-end gap-2 overflow-visible"
         }`}
-        style={{ boxShadow: "0 20px 60px -10px rgb(0 0 0 / 0.6)" }}
+        style={isMobile ? MOBILE_DOCK_STYLE : undefined}
       >
-        {APPS.map((a, i) => {
-          const w = windows[a.id];
-          return (
-            <button
-              key={a.id}
-              ref={(el) => { itemsRef.current[i] = el; }}
-              onClick={() => handleClick(a.id)}
-              className="relative group"
-              aria-label={a.label}
-              style={{ transformOrigin: "bottom center" }}
-            >
-              <span
-                aria-hidden
-                className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-10 h-3 rounded-full blur-md opacity-70"
-                style={{ background: `rgba(${a.glow},0.55)` }}
-              />
-              <div
-                className={`relative rounded-[1.05rem] flex items-center justify-center text-white overflow-hidden ${
-                  isMobile ? "w-11 h-11 shrink-0" : "w-12 h-12 md:w-14 md:h-14"
-                }`}
-                style={{
-                  background: a.gradient,
-                  boxShadow: `inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -6px 14px rgba(0,0,0,0.35), inset 0 0 0 0.5px rgba(255,255,255,0.18), 0 8px 18px rgba(0,0,0,0.45), 0 2px 8px rgba(${a.glow},0.45)`,
-                }}
-              >
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-1 top-1 h-1/2 rounded-[0.85rem] opacity-70"
-                  style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.04) 100%)" }}
-                />
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute -inset-1 rounded-[1.2rem] opacity-0 group-hover:opacity-100 transition"
-                  style={{ boxShadow: `0 0 22px 2px rgba(${a.glow},0.55)` }}
-                />
-                <a.Icon className="relative w-6 h-6 md:w-7 md:h-7 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
-              </div>
-              <span
-                className={`absolute -top-9 left-1/2 -translate-x-1/2 text-[11px] font-medium px-2 py-1 rounded-md glass transition whitespace-nowrap pointer-events-none ${
-                  isMobile ? "hidden" : "opacity-0 group-hover:opacity-100"
-                }`}
-              >
-                {a.label}
-              </span>
-              {w.isOpen && (
-                <span
-                  className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                  style={{ background: `rgba(${a.glow},0.95)`, boxShadow: `0 0 6px rgba(${a.glow},0.9)` }}
-                />
-              )}
-            </button>
-          );
-        })}
+        {isMobile ? (
+          <div
+            ref={scrollRef}
+            className="dock-scroll flex items-center justify-start gap-2.5 overflow-x-auto scrollbar-hidden px-3 py-1 w-full"
+          >
+            {APP_IDS.map((id, i) => renderIcon(id, i))}
+          </div>
+        ) : (
+          APP_IDS.map((id, i) => renderIcon(id, i))
+        )}
       </div>
     </div>
   );

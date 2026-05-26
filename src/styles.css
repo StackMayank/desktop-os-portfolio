@@ -39,8 +39,8 @@
   --font-mono: "SF Mono", ui-monospace, "Menlo", "Monaco", monospace;
 }
 
-:root {
-  --radius: 0.875rem;
+:root,
+.dark {
   --background: oklch(0.08 0.02 270);
   --foreground: oklch(0.98 0.005 250);
   --card: oklch(0.14 0.02 270 / 0.7);
@@ -63,26 +63,22 @@
 
   --glass: oklch(0.14 0.02 270 / 0.55);
   --glass-strong: oklch(0.1 0.02 270 / 0.78);
+  --glass-soft: oklch(1 0 0 / 0.04);
   --glass-border: oklch(1 0 0 / 0.1);
 
-  --mac-red: oklch(0.68 0.22 25);
-  --mac-yellow: oklch(0.82 0.16 85);
-  --mac-green: oklch(0.72 0.18 145);
+  /* macOS window traffic lights */
+  --mac-red: #ff5f57;
+  --mac-yellow: #febc2e;
+  --mac-green: #28c840;
 
   --shadow-window: 0 30px 80px -20px rgb(0 0 0 / 0.7), 0 10px 30px -10px rgb(0 0 0 / 0.5);
   --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.4), inset 0 1px 0 rgb(255 255 255 / 0.06);
 
-  /* Scrollbars — glass rail + thumb (Firefox uses scrollbar-color) */
   --scrollbar-thumb: oklch(0.58 0.14 285 / 0.72);
   --scrollbar-thumb-hover: oklch(0.68 0.16 285 / 0.88);
   --scrollbar-thumb-active: oklch(0.48 0.12 280 / 0.95);
   --scrollbar-track: oklch(0.12 0.025 270 / 0.42);
   --scrollbar-track-edge: oklch(1 0 0 / 0.07);
-}
-
-.dark {
-  --background: oklch(0.08 0.02 270);
-  --foreground: oklch(0.98 0.005 250);
 }
 
 @layer base {
@@ -185,6 +181,13 @@
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-glass);
   }
+
+  /** Desktop/mobile widgets — rounded squircle like macOS */
+  .widget-panel {
+    border-radius: 1.375rem;
+    overflow: hidden;
+    isolation: isolate;
+  }
   .glass-strong {
     background-color: var(--glass-strong);
     backdrop-filter: blur(40px) saturate(200%);
@@ -193,7 +196,7 @@
     box-shadow: var(--shadow-window);
   }
   .glass-soft {
-    background-color: oklch(1 0 0 / 0.04);
+    background-color: var(--glass-soft);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid var(--glass-border);
@@ -201,6 +204,7 @@
   .text-glow {
     text-shadow: 0 0 24px oklch(0.7 0.18 280 / 0.6);
   }
+
   /* Must win over global * scrollbar rules */
   .scrollbar-hidden {
     scrollbar-width: none;
@@ -214,6 +218,65 @@
     width: 0;
     height: 0;
     background: transparent;
+  }
+
+  /** Mobile dock — smooth horizontal swipe, no visible scrollbar */
+  .dock-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+  }
+  .dock-scroll > button {
+    scroll-snap-align: center;
+    flex-shrink: 0;
+  }
+
+  /** Dock magnify: scales/lifts icon tile from the bottom (macOS-style) */
+  .dock-magnify-root {
+    transform-origin: bottom center;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  .dock-icon-tile {
+    transform: translateZ(0);
+  }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /** macOS-style close / minimize / maximize circles */
+  .traffic-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    border: 0.5px solid rgb(0 0 0 / 0.18);
+    box-shadow: inset 0 0 0 0.5px rgb(255 255 255 / 0.12);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: transform 0.12s ease, filter 0.12s ease;
+  }
+  .traffic-light:active {
+    transform: scale(0.92);
+    filter: brightness(0.92);
+  }
+  .traffic-light__glyph {
+    opacity: 0;
+    font-size: 9px;
+    font-weight: 700;
+    color: rgb(0 0 0 / 0.55);
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+  }
+  .traffic-lights:hover .traffic-light__glyph,
+  .traffic-lights:focus-within .traffic-light__glyph {
+    opacity: 1;
   }
 
   /** Opt-in: stronger glass chrome (nested scrollers, modals) */

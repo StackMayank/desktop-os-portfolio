@@ -15,25 +15,36 @@ export function CalendarWidget() {
       monthLabel: today.toLocaleDateString(undefined, { month: "long", year: "numeric" }),
     };
   }, [today.getMonth(), today.getFullYear()]);
+  const todayNum = today.getDate();
 
   return (
-    <div className="w-full min-w-0 h-full min-h-0 flex flex-col">
-      <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1 shrink-0">Calendar</div>
-      <div className="text-sm font-medium mb-2 truncate shrink-0" title={monthLabel}>{monthLabel}</div>
-      <div className="grid grid-cols-7 gap-0.5 sm:gap-1 text-[10px] text-muted-foreground mb-1 shrink-0">
-        {["S","M","T","W","T","F","S"].map((d, i) => <div key={i} className="text-center">{d}</div>)}
+    <div className="w-full min-w-0 min-h-[248px] flex flex-col justify-start">
+      <div className="text-xs uppercase tracking-widest text-white/80 mb-1 shrink-0">Calendar</div>
+      <div className="text-sm font-medium mb-2 truncate shrink-0 text-white" title={monthLabel}>
+        {monthLabel}
       </div>
-      <div className="grid grid-cols-7 gap-0.5 sm:gap-1 text-[10px] sm:text-xs min-w-0 flex-1 content-start">
+      <div className="grid grid-cols-7 gap-x-1.5 gap-y-1 text-[10px] text-white/60 mb-2 shrink-0">
+        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+          <div key={i} className="text-center leading-none">
+            {d}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-x-1.5 gap-y-1.5 text-[11px] min-w-0 shrink-0">
         {days.map((d, i) => (
           <div
             key={i}
-            className={`text-center py-1 rounded-md ${
-              d === today.getDate()
-                ? "bg-primary text-primary-foreground font-semibold"
-                : d ? "hover:bg-white/5" : ""
+            className={`flex items-center justify-center min-h-[26px] ${
+              d ? "text-white/85 hover:bg-white/5 rounded-md" : ""
             }`}
           >
-            {d ?? ""}
+            {d === todayNum ? (
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-black font-semibold">
+                {d}
+              </span>
+            ) : (
+              d ?? ""
+            )}
           </div>
         ))}
       </div>

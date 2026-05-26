@@ -6,9 +6,17 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Mayank — Portfolio OS" },
-      { name: "description", content: "An interactive macOS-style portfolio by Mayank. Explore apps, widgets, and projects in a real OS-like experience." },
+      {
+        name: "description",
+        content:
+          "An interactive macOS-style portfolio by Mayank. Explore apps, widgets, and projects in a real OS-like experience.",
+      },
       { property: "og:title", content: "Mayank — Portfolio OS" },
-      { property: "og:description", content: "Interactive macOS-style portfolio. Draggable windows, dock, widgets — built with React, Framer Motion and GSAP." },
+      {
+        property: "og:description",
+        content:
+          "Interactive macOS-style portfolio. Draggable windows, dock, widgets — built with React, Framer Motion and GSAP.",
+      },
     ],
   }),
   component: Index,

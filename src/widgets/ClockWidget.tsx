@@ -30,8 +30,8 @@ export function ClockWidget() {
   const zone = Intl.DateTimeFormat().resolvedOptions().timeZone?.replace("_", " ") ?? "Local Time";
 
   return (
-    <div ref={rootRef} className="w-full min-w-0 h-full min-h-0 flex flex-col">
-      <div className="text-xs uppercase tracking-widest text-muted-foreground shrink-0">New Delhi</div>
+    <div ref={rootRef} className="w-full min-w-0 flex flex-col justify-start">
+      <div className="text-xs uppercase tracking-widest text-white/80 shrink-0">New Delhi</div>
       <div
         className={`font-light tabular-nums mt-2 leading-none shrink-0 transition-all duration-200 ${
           isLarge ? "text-[clamp(1.65rem,5.6vmin,2.6rem)] text-glow" : "text-[clamp(1.5rem,5vmin,2.25rem)] text-glow"
@@ -39,9 +39,9 @@ export function ClockWidget() {
       >
         {time}
       </div>
-      <div className="text-xs text-muted-foreground mt-1 min-w-0 shrink-0 break-words">{date}</div>
+      <div className="text-xs text-white/70 mt-1 min-w-0 shrink-0 wrap-break-word">{date}</div>
       {isLarge && (
-        <div className="text-[11px] text-foreground/70 mt-2 tracking-wide uppercase">{zone}</div>
+        <div className="text-[11px] text-white/60 mt-2 tracking-wide uppercase">{zone}</div>
       )}
     </div>
   );

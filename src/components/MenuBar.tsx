@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Apple, Wifi, BatteryFull, Search } from "lucide-react";
-
 export function MenuBar() {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
@@ -12,7 +11,7 @@ export function MenuBar() {
   const time = now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 
   return (
-    <div className="fixed top-0 inset-x-0 h-7 md:h-7 z-[10000] glass flex items-center px-2.5 md:px-3 text-xs font-medium text-foreground/90 select-none">
+    <div className="fixed top-0 inset-x-0 h-7 sm:h-7 z-[10000] glass flex items-center px-2.5 sm:px-3 text-[11px] sm:text-xs font-medium text-foreground/90 select-none pt-[env(safe-area-inset-top,0px)]">
       <div className="flex items-center gap-2 md:gap-4 min-w-0">
         <Apple className="w-4 h-4" />
         <span className="font-semibold">Mayank</span>

@@ -6,9 +6,9 @@ interface Line { kind: "in" | "out"; text: string }
 const HELP = `Available commands:
   help        — show this message
   about       — open the About app
-  projects    — open the Projects app
+  docs    — open Resume
   skills      — open the Skills app
-  contact     — open the Contact app
+  contact     — open WhatsApp chat
   whoami      — about me
   ls          — list apps
   clear       — clear the screen
@@ -30,9 +30,13 @@ export function TerminalApp() {
     const cmd = raw.trim();
     const out: Line[] = [{ kind: "in", text: raw }];
     const [name, ...rest] = cmd.split(/\s+/);
-    const appsMap: Record<string, AppId> = { about: "about", projects: "projects", skills: "skills", contact: "contact", music: "music", game: "game" };
+    const appsMap: Record<string, AppId> = { about: "about", docs: "docs", skills: "skills", music: "music", game: "game" };
     switch (name) {
       case "":
+        break;
+      case "contact":
+        window.open("https://wa.link/pf9ivh", "_blank", "noopener,noreferrer");
+        out.push({ kind: "out", text: "Opening WhatsApp…" });
         break;
       case "help":
         out.push({ kind: "out", text: HELP });
@@ -44,7 +48,7 @@ export function TerminalApp() {
         out.push({ kind: "out", text: "mayank — frontend engineer building delightful interfaces." });
         break;
       case "ls":
-        out.push({ kind: "out", text: "about  projects  skills  experience  contact  music  game" });
+        out.push({ kind: "out", text: "about  docs  skills  experience  contact  music  game" });
         break;
       case "echo":
         out.push({ kind: "out", text: rest.join(" ") });
