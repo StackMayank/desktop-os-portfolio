@@ -11,7 +11,7 @@ export function AboutApp() {
     { year: "2021", text: "Started college and built my first client website as a Web Design Intern using no-code tools." },
   ];
   return (
-    <div className="p-6 sm:p-8 space-y-6 min-h-0 min-w-0 max-w-full">
+    <div className="p-6 sm:p-8 pb-16 sm:pb-20 space-y-6 min-h-0 min-w-0 max-w-full">
       <div className="flex items-center gap-4">
         <img
           src={profile}
