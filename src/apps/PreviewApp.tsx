@@ -7,7 +7,7 @@ export function PreviewApp() {
       <div className="flex items-center justify-end gap-2 shrink-0">
         <a
           href={resumePdf}
-          download="Mayank-React-Resume.pdf"
+          download="Mayank-Resume.pdf"
           className="text-xs flex items-center gap-1.5 px-2 py-1 rounded glass-soft hover:text-primary transition"
         >
           <Download className="w-3.5 h-3.5" />

@@ -19,7 +19,7 @@ export const PROJECTS_ROOT: DocNode[] = [
   {
     type: "file",
     id: "resume-pdf",
-    name: "Mayank React Resume.pdf",
+    name: "Mayank Resume.pdf",
     fileKind: "resume-pdf",
   },
 ];
