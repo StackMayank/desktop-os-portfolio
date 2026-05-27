@@ -22,7 +22,7 @@ export function AboutApp() {
         />
         <div>
           <h1 className="text-2xl font-semibold">Mayank</h1>
-          <p className="text-muted-foreground">Frontend Engineer · Creative Developer</p>
+          <p className="text-muted-foreground">Growth Frontend Engineer · Creative Developer</p>
         </div>
       </div>
       <div className="glass-soft rounded-xl p-5">
